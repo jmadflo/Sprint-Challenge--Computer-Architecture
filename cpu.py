@@ -222,9 +222,8 @@ class CPU:
                 self.pc += 3
             elif instruction == operations['NOT']:
                 reg_slot_1 = self.ram[self.pc + 1]
-                reg_slot_2 = self.ram[self.pc + 2]
                 self.alu('NOT', reg_slot_1, reg_slot_2)
-                self.pc += 3
+                self.pc += 2
             elif instruction == operations['SHL']:
                 reg_slot_1 = self.ram[self.pc + 1]
                 reg_slot_2 = self.ram[self.pc + 2]
