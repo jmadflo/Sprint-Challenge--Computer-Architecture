@@ -44,7 +44,7 @@ class CPU:
                     instruction = instruction.replace('\n', '')
                 if instruction != '':
                     self.ram[address] = int(instruction, 2)
-                address += 1
+                    address += 1
             # print(self.ram)
                 
 
@@ -62,9 +62,9 @@ class CPU:
         elif op == "MUL":
             self.reg[reg_a] *= self.reg[reg_b]
         elif op == "CMP":
-            if self.reg[reg_slot_1] < self.reg[reg_slot_2]:
+            if self.reg[reg_a] < self.reg[reg_b]:
                     self.flags_register = 0b00000100 # L
-            elif self.reg[reg_slot_1] > self.reg[reg_slot_2]:
+            elif self.reg[reg_a] > self.reg[reg_b]:
                 self.flags_register = 0b00000010 # G
             else:
                 self.flags_register = 0b00000001 # E
@@ -104,15 +104,16 @@ class CPU:
             'CALL': 0b01010000,
             'RET': 0b00010001,
             'ADD': 0b10100000,
-            'CMP': [0b00000100, 0b00000010, 0b00000001],
+            'CMP': 0b10100111,
             'JMP': 0b01010100,
             'JEQ': 0b01010101,
             'JNE': 0b01010110
         }
         while running:
             instruction = self.ram_read(self.pc)
+            # print(instruction)
             if instruction == operations['HLT']:
-                running = False
+                sys.exit()
             elif instruction == operations['LDI']:
                 reg_slot = self.ram[self.pc + 1]
                 val = self.ram[self.pc + 2]
@@ -159,7 +160,7 @@ class CPU:
                 reg_slot_2 = self.ram[self.pc + 2]
                 self.alu('ADD', reg_slot_1, reg_slot_2)
                 self.pc += 3
-            elif instruction in operations['CMP']:
+            elif instruction == operations['CMP']:
                 reg_slot_1 = self.ram[self.pc + 1]
                 reg_slot_2 = self.ram[self.pc + 2]
                 self.alu('CMP', reg_slot_1, reg_slot_2)
