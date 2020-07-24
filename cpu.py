@@ -68,6 +68,24 @@ class CPU:
                 self.flags_register = 0b00000010 # G
             else:
                 self.flags_register = 0b00000001 # E
+        elif op == "AND":
+            self.reg[reg_a] &= self.reg[reg_b]
+        elif op == "OR":
+            self.reg[reg_a] |= self.reg[reg_b]
+        elif op == "XOR":
+            self.reg[reg_a] ^= self.reg[reg_b]
+        elif op == "NOT":
+            self.reg[reg_a] = (1 << 8) - 1 - self.reg[reg_a]
+        elif op == "SHL":
+            self.reg[reg_a] <<= self.reg[reg_b]
+        elif op == "SHR":
+            self.reg[reg_a] >>= self.reg[reg_b]
+        elif op == "MOD":
+            if self.reg[reg_b] == 0:
+                print('Error. Cannot run modulus on 0')
+                sys.exit()
+            else:
+                self.reg[reg_a] %= self.reg[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -107,7 +125,14 @@ class CPU:
             'CMP': 0b10100111,
             'JMP': 0b01010100,
             'JEQ': 0b01010101,
-            'JNE': 0b01010110
+            'JNE': 0b01010110,
+            'AND': 0b10101000,
+            'OR': 0b10101010,
+            'XOR': 0b10101011,
+            'NOT': 0b01101001,
+            'SHL': 0b10101100,
+            'SHR': 0b10101101,
+            'MOD': 0b10100100
         }
         while running:
             instruction = self.ram_read(self.pc)
@@ -180,3 +205,38 @@ class CPU:
                     self.pc = self.reg[reg_slot]
                 else:
                     self.pc += 2
+            elif instruction == operations['AND']:
+                reg_slot_1 = self.ram[self.pc + 1]
+                reg_slot_2 = self.ram[self.pc + 2]
+                self.alu('AND', reg_slot_1, reg_slot_2)
+                self.pc += 3
+            elif instruction == operations['OR']:
+                reg_slot_1 = self.ram[self.pc + 1]
+                reg_slot_2 = self.ram[self.pc + 2]
+                self.alu('OR', reg_slot_1, reg_slot_2)
+                self.pc += 3
+            elif instruction == operations['XOR']:
+                reg_slot_1 = self.ram[self.pc + 1]
+                reg_slot_2 = self.ram[self.pc + 2]
+                self.alu('XOR', reg_slot_1, reg_slot_2)
+                self.pc += 3
+            elif instruction == operations['NOT']:
+                reg_slot_1 = self.ram[self.pc + 1]
+                reg_slot_2 = self.ram[self.pc + 2]
+                self.alu('NOT', reg_slot_1, reg_slot_2)
+                self.pc += 3
+            elif instruction == operations['SHL']:
+                reg_slot_1 = self.ram[self.pc + 1]
+                reg_slot_2 = self.ram[self.pc + 2]
+                self.alu('SHL', reg_slot_1, reg_slot_2)
+                self.pc += 3
+            elif instruction == operations['SHR']:
+                reg_slot_1 = self.ram[self.pc + 1]
+                reg_slot_2 = self.ram[self.pc + 2]
+                self.alu('SHR', reg_slot_1, reg_slot_2)
+                self.pc += 3
+            elif instruction == operations['MOD']:
+                reg_slot_1 = self.ram[self.pc + 1]
+                reg_slot_2 = self.ram[self.pc + 2]
+                self.alu('MOD', reg_slot_1, reg_slot_2)
+                self.pc += 3
